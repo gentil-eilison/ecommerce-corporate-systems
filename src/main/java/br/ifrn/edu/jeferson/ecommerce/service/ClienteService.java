@@ -7,7 +7,10 @@ import br.ifrn.edu.jeferson.ecommerce.exception.BusinessException;
 import br.ifrn.edu.jeferson.ecommerce.exception.ResourceNotFoundException;
 import br.ifrn.edu.jeferson.ecommerce.mapper.ClienteMapper;
 import br.ifrn.edu.jeferson.ecommerce.repository.ClienteRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -56,6 +59,11 @@ public class ClienteService {
                         String.format("Cliente com id %d não encontrado", id)
                 ));
         return clienteMapper.toResponseDTO(cliente);
+    }
+
+    public Page<ClienteResponseDTO> buscarTodos(Pageable pageable) {
+        Page<Cliente> clientes = clienteRepository.findAll(pageable);
+        return clienteMapper.toPageDTO(clientes);
     }
 
     public ClienteResponseDTO salvar(ClienteRequestDTO clienteRequestDTO) {

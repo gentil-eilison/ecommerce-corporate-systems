@@ -4,7 +4,10 @@ import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ClienteRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ClienteResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.service.ClienteService;
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,12 @@ public class ClienteController {
     public ResponseEntity<ClienteResponseDTO> buscarPorId(@PathVariable Long id) {
         var clienteResponseDTO = clienteService.buscarPorId(id);
         return ResponseEntity.ok(clienteResponseDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ClienteResponseDTO>> buscarTodos(Pageable pageable) {
+        var clientePageResponseDTO = clienteService.buscarTodos(pageable);
+        return ResponseEntity.ok(clientePageResponseDTO);
     }
 
     @PostMapping
