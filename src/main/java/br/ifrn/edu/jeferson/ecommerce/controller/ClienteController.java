@@ -32,4 +32,10 @@ public class ClienteController {
         clienteService.deletarPorId(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteRequestDTO clienteRequestDTO) {
+        var clienteResponseDTO = clienteService.atualizar(clienteRequestDTO, id);
+        return ResponseEntity.ok(clienteResponseDTO);
+    }
 }

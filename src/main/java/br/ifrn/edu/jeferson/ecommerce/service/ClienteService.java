@@ -18,20 +18,35 @@ public class ClienteService {
     @Autowired
     private ClienteMapper clienteMapper;
 
-    private void jogarSeCpfNaoUnico(String cpf) {
-        if (clienteRepository.existsByCpf(cpf)) {
-            throw new BusinessException(
-                    String.format("Cliente com CPF %s já existe", cpf)
-            );
+    private void jogarSeCpfNaoUnico(String cpf, Long id) {
+        boolean exists = false;
+
+        if (id != null) {
+            exists = clienteRepository.existsByCpfAndIdNot(cpf, id);
         }
+        exists = clienteRepository.existsByCpf(cpf);
+
+        if (exists) throw new BusinessException(
+            String.format("Cliente com CPF %s já existe", cpf)
+        );
     }
 
-    private void jogarSeEmailNaoUnico(String email) {
-        if (clienteRepository.existsByEmail(email)) {
-            throw new BusinessException(
-                    String.format("Cliente com e-mail %s já existe", email)
-            );
+    private void jogarSeEmailNaoUnico(String email, Long id) {
+        boolean exists = false;
+        
+        if (id != null) {
+            exists = clienteRepository.existsByEmailAndIdNot(email, id);
         }
+        exists = clienteRepository.existsByEmail(email);
+
+        if (exists) throw new BusinessException(
+            String.format("Cliente com e-mail %s já existe", email)
+        );
+    }
+
+    private void validarCliente(ClienteRequestDTO clienteRequestDTO, Long id) {
+        jogarSeCpfNaoUnico(clienteRequestDTO.getCpf(), id);
+        jogarSeEmailNaoUnico(clienteRequestDTO.getEmail(), id);
     }
 
     public ClienteResponseDTO buscarPorId(Long id) {
@@ -44,8 +59,7 @@ public class ClienteService {
     }
 
     public ClienteResponseDTO salvar(ClienteRequestDTO clienteRequestDTO) {
-        jogarSeCpfNaoUnico(clienteRequestDTO.getCpf());
-        jogarSeEmailNaoUnico(clienteRequestDTO.getEmail());
+        validarCliente(clienteRequestDTO, null);
 
         Cliente cliente = clienteMapper.toEntity(clienteRequestDTO);
         clienteRepository.save(cliente);
@@ -59,5 +73,19 @@ public class ClienteService {
             );
         }
         clienteRepository.deleteById(id);
+    }
+
+    public ClienteResponseDTO atualizar(ClienteRequestDTO clienteRequestDTO, Long id) {
+        var cliente = clienteRepository
+            .findById(id)
+            .orElseThrow(() ->  new ResourceNotFoundException(
+                String.format("Cliente com id %d não foi encontrado", id)
+            ));
+        validarCliente(clienteRequestDTO, id);
+        
+        clienteMapper.updateEntityFromDTO(clienteRequestDTO, cliente);
+        var clienteAtualizado = clienteRepository.save(cliente);
+        
+        return clienteMapper.toResponseDTO(clienteAtualizado);
     }
 }
