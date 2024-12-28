@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-12-28T15:49:44-0300",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.5 (Oracle Corporation)"
+    date = "2024-12-28T17:27:55-0300",
+    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.40.0.v20240919-1711, environment: Java 17.0.12 (Eclipse Adoptium)"
 )
 @Component
 public class CategoriaMapperImpl implements CategoriaMapper {
@@ -24,9 +24,9 @@ public class CategoriaMapperImpl implements CategoriaMapper {
 
         CategoriaResponseDTO categoriaResponseDTO = new CategoriaResponseDTO();
 
+        categoriaResponseDTO.setDescricao( categoria.getDescricao() );
         categoriaResponseDTO.setId( categoria.getId() );
         categoriaResponseDTO.setNome( categoria.getNome() );
-        categoriaResponseDTO.setDescricao( categoria.getDescricao() );
 
         return categoriaResponseDTO;
     }
@@ -39,8 +39,8 @@ public class CategoriaMapperImpl implements CategoriaMapper {
 
         Categoria categoria = new Categoria();
 
-        categoria.setNome( dto.getNome() );
         categoria.setDescricao( dto.getDescricao() );
+        categoria.setNome( dto.getNome() );
 
         return categoria;
     }
@@ -65,11 +65,11 @@ public class CategoriaMapperImpl implements CategoriaMapper {
             return;
         }
 
-        if ( dto.getNome() != null ) {
-            categoria.setNome( dto.getNome() );
-        }
         if ( dto.getDescricao() != null ) {
             categoria.setDescricao( dto.getDescricao() );
+        }
+        if ( dto.getNome() != null ) {
+            categoria.setNome( dto.getNome() );
         }
     }
 }

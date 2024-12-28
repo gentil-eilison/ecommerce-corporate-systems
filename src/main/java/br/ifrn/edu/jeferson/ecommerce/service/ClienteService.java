@@ -1,6 +1,9 @@
 package br.ifrn.edu.jeferson.ecommerce.service;
 
+import br.ifrn.edu.jeferson.ecommerce.domain.Cliente;
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ClienteRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ClienteResponseDTO;
+import br.ifrn.edu.jeferson.ecommerce.exception.BusinessException;
 import br.ifrn.edu.jeferson.ecommerce.exception.ResourceNotFoundException;
 import br.ifrn.edu.jeferson.ecommerce.mapper.ClienteMapper;
 import br.ifrn.edu.jeferson.ecommerce.repository.ClienteRepository;
@@ -15,12 +18,37 @@ public class ClienteService {
     @Autowired
     private ClienteMapper clienteMapper;
 
-    public ClienteResponseDTO getById(Long id) {
+    private void jogarSeCpfNaoUnico(String cpf) {
+        if (clienteRepository.existsByCpf(cpf)) {
+            throw new BusinessException(
+                    String.format("Cliente com CPF %s já existe", cpf)
+            );
+        }
+    }
+
+    private void jogarSeEmailNaoUnico(String email) {
+        if (clienteRepository.existsByEmail(email)) {
+            throw new BusinessException(
+                    String.format("Cliente com e-mail %s já existe", email)
+            );
+        }
+    }
+
+    public ClienteResponseDTO buscarPorId(Long id) {
         var cliente = clienteRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Cliente com id %d não encontrado", id)
                 ));
+        return clienteMapper.toResponseDTO(cliente);
+    }
+
+    public ClienteResponseDTO salvar(ClienteRequestDTO clienteRequestDTO) {
+        jogarSeCpfNaoUnico(clienteRequestDTO.getCpf());
+        jogarSeEmailNaoUnico(clienteRequestDTO.getEmail());
+
+        Cliente cliente = clienteMapper.toEntity(clienteRequestDTO);
+        clienteRepository.save(cliente);
         return clienteMapper.toResponseDTO(cliente);
     }
 }

@@ -28,6 +28,6 @@ public class ClienteRequestDTO {
     private String cpf;
 
     @NotBlank(message = "Telefone não pode ser nulo")
-    @Pattern(regexp = "\\(\\d{2}\\) 9\\d{4}-\\d{4}")
+    @Pattern(regexp = "\\(\\d{2}\\) 9\\d{4}-\\d{4}", message = "Telefone deve seguir o formato (XX) XXXXX-XXXX")
     private String telefone;
 }
