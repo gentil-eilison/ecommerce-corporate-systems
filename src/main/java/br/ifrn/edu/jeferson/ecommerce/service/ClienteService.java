@@ -51,4 +51,13 @@ public class ClienteService {
         clienteRepository.save(cliente);
         return clienteMapper.toResponseDTO(cliente);
     }
+
+    public void deletarPorId(Long id) {
+        if (!clienteRepository.existsById(id)) {
+            throw new BusinessException(
+                String.format("Cliente com id %d não existe", id)
+            );
+        }
+        clienteRepository.deleteById(id);
+    }
 }

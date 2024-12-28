@@ -26,4 +26,10 @@ public class ClienteController {
         var clienteResponseDTO = clienteService.salvar(clienteRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteResponseDTO);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarPorId(@PathVariable Long id) {
+        clienteService.deletarPorId(id);
+        return ResponseEntity.noContent().build();
+    }
 }
