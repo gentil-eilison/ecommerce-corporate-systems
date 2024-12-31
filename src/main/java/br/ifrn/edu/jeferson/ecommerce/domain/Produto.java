@@ -21,12 +21,19 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String nome;
+
     private String descricao;
 
     @Check(constraints = "preco >= 0")
+    @Column(nullable = false)
     private BigDecimal preco;
-    private Integer estoque;
+
+    @Check(constraints = "estoque >= 0")
+    @Column(nullable = false)
+    private Integer estoque = 0;
 
     @ManyToMany
     @JoinTable(name = "produto_categoria",

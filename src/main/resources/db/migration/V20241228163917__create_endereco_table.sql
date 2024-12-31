@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS endereco(
     id SERIAL PRIMARY KEY,
-    rua VARCHAR(256) NOT NULL,
-    numero VARCHAR(256) NOT NULL,
-    bairro VARCHAR(256) NOT NULL,
-    cidade VARCHAR(256) NOT NULL,
-    estado VARCHAR(256) NOT NULL,
+    rua VARCHAR(255) NOT NULL,
+    numero VARCHAR(255) NOT NULL,
+    bairro VARCHAR(255) NOT NULL,
+    cidade VARCHAR(255) NOT NULL,
+    estado VARCHAR(255) NOT NULL,
     cep VARCHAR(9) NOT NULL,
     cliente_id INT NOT NULL REFERENCES cliente ON DELETE CASCADE
 );
