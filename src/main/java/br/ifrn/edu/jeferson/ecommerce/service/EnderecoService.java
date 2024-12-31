@@ -46,4 +46,11 @@ public class EnderecoService {
         var endereco = enderecoRepository.findByClienteId(clienteId).orElseThrow(() -> new BusinessException("Não há endereço para esse cliente"));
         enderecoRepository.delete(endereco);
     }
+
+    public EnderecoResponseDTO atualizarPorClienteId(Long clienteId, EnderecoRequestDTO enderecoRequestDTO) {
+        var endereco = enderecoRepository.findByClienteId(clienteId).orElseThrow(() -> new BusinessException("Não há endereço cadastrado para esse cliente"));
+        enderecoMapper.updateEntityFromDTO(enderecoRequestDTO, endereco);
+        var enderecoAtualizado = enderecoRepository.save(endereco);
+        return enderecoMapper.toResponseDTO(enderecoAtualizado);
+    }
 }
