@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import br.ifrn.edu.jeferson.ecommerce.domain.Categoria;
 import br.ifrn.edu.jeferson.ecommerce.domain.Produto;
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoPartialRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutosPorCategoriaResponseDTO;
@@ -95,5 +96,15 @@ public class ProdutoService {
         var produtosCategoria = categoria.getProdutos();
         var produtosPaginados = new PageImpl<Produto>(produtosCategoria, pageable, produtosCategoria.size());
         return produtoMapper.toProdutosPorCategoriaPageDTO(produtosPaginados);
+    }
+
+    public ProdutoResponseDTO atualizarEstoque(Long id, ProdutoPartialRequestDTO produtoPartialRequestDTO) {
+        var produto = produtoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Produto com id %d não encontrado", id)
+            )
+        );
+        produtoMapper.partialUpdateEntityFromDTO(produtoPartialRequestDTO, produto);
+        var produtoAtualizado = produtoRepository.save(produto);
+        return produtoMapper.toResponseDTO(produtoAtualizado);
     }
 }

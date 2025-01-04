@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoPartialRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutosPorCategoriaResponseDTO;
@@ -74,5 +76,14 @@ public class ProdutoController {
     ) {
         var produtosPorCategoriaResponseDTO = produtoService.produtosPorCategoria(categoriaId, pageable);
         return ResponseEntity.ok(produtosPorCategoriaResponseDTO);
+    }
+
+    @PatchMapping("/{id}/estoque")
+    public ResponseEntity<ProdutoResponseDTO> atualizarEstoque(
+        @Valid @RequestBody ProdutoPartialRequestDTO produtoPartialRequestDTO,
+        @PathVariable Long id
+    ) {
+        var produtoResponseDTO = produtoService.atualizarEstoque(id, produtoPartialRequestDTO);
+        return ResponseEntity.ok(produtoResponseDTO);
     }
 }
