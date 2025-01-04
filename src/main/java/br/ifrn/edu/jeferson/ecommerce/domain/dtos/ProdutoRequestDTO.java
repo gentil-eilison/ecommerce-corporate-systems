@@ -1,6 +1,7 @@
 package br.ifrn.edu.jeferson.ecommerce.domain.dtos;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,20 +20,22 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProdutoRequestDTO {
-    @NotBlank(message = "Nome deve ser informado")
-    @Size(max = 255, message = "Nome deve ter no máximo 255 caracteres")
+    @Size(max = 255, message = "Nome deve ter até 255 caracteres")
+    @NotBlank(message = "Nome não pode ser vazio")
     private String nome;
 
-    @Size(max = 255, message = "Descrição teve ter no máximo 255 caracteres")
+    @Size(max = 255, message = "Descrição deve ter até 255 caracteres")
     private String descricao;
 
-    @NotNull(message = "Preço deve ser informado")
-    @DecimalMin(value = "0.0", message = "Valor mínimo é de 0.0")
+    @DecimalMin(value = "0.0", message = "Preço deve ser >= 0")
+    @Digits(integer = Integer.MAX_VALUE, fraction = 2, message = "O preço deve ter até 2 casas decimais")
+    @NotNull(message = "Preço não pode ser nulo")
     private BigDecimal preco;
 
-    @Min(value = 0, message = "Valor mínimo é 0")
-    private Integer estoque = 0;
+    @Min(value = 0, message = "Estoque deve ser >= 0")
+    @NotNull(message = "Estoque não pode ser nulo")
+    private Integer estoque;
 
-    @NotEmpty(message = "Deve ser passado ao menos uma categoria")
+    @NotEmpty(message = "Deve ser passado pelo menos uma categoria")
     private List<Long> categoriasIds;
 }

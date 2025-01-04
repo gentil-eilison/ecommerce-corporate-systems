@@ -1,12 +1,12 @@
 package br.ifrn.edu.jeferson.ecommerce.domain.dtos;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,5 +18,5 @@ public class ProdutoResponseDTO {
     private String descricao;
     private BigDecimal preco;
     private Integer estoque;
-    private List<Long> categoriasIds;
+    private List<CategoriaResponseDTO> categorias;
 }

@@ -1,9 +1,16 @@
 package br.ifrn.edu.jeferson.ecommerce.service;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import br.ifrn.edu.jeferson.ecommerce.domain.Categoria;
+import br.ifrn.edu.jeferson.ecommerce.domain.Produto;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.exception.BusinessException;
@@ -11,9 +18,7 @@ import br.ifrn.edu.jeferson.ecommerce.exception.ResourceNotFoundException;
 import br.ifrn.edu.jeferson.ecommerce.mapper.ProdutoMapper;
 import br.ifrn.edu.jeferson.ecommerce.repository.CategoriaRepository;
 import br.ifrn.edu.jeferson.ecommerce.repository.ProdutoRepository;
-
-import java.util.stream.Collectors;
-import java.util.List;
+import br.ifrn.edu.jeferson.ecommerce.specifications.ProdutoSpecification;
 
 @Service
 public class ProdutoService {
@@ -26,37 +31,54 @@ public class ProdutoService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
-    public ProdutoResponseDTO salvar(ProdutoRequestDTO produtoRequestDTO) {
-        List<Long> categoriasIds = produtoRequestDTO.getCategoriasIds();
-        var categorias = categoriaRepository
-            .findAllById(categoriasIds);
-        
+    private List<Categoria> buscarCategorias(List<Long> categoriasIds) {
+        var categorias = categoriaRepository.findAllById(categoriasIds);
         if (categorias.size() != categoriasIds.size()) {
-            throw new BusinessException("Uma ou mais categorias informadas não existem");
+            throw new BusinessException("Há uma ou mais categorias inválidas");
         }
+        return categorias;
+    }
 
+    public ProdutoResponseDTO salvar(ProdutoRequestDTO produtoRequestDTO) {
+        var categorias = buscarCategorias(produtoRequestDTO.getCategoriasIds());
         var produto = produtoMapper.toEntity(produtoRequestDTO);
         produto.setCategorias(categorias);
         produtoRepository.save(produto);
-        var produtoResponseDTO = produtoMapper.toResponseDTO(produto);
-        produtoResponseDTO.setCategoriasIds(
-            categorias.stream()
-                .map(Categoria::getId)
-                .collect(Collectors.toList())
-            );
-        return produtoResponseDTO;
+        return produtoMapper.toResponseDTO(produto);
     }
 
     public ProdutoResponseDTO buscarPorId(Long id) {
-        var produto = produtoRepository
-            .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Produto com esse id não existe"));
-        var produtoResponseDTO = produtoMapper.toResponseDTO(produto);
-        produtoResponseDTO.setCategoriasIds(
-            produto.getCategorias().stream()
-                .map(Categoria::getId)
-                .collect(Collectors.toList())
+        var produto = produtoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+            String.format("Produto com id %d não existe", id)
+        ));
+        return produtoMapper.toResponseDTO(produto);
+    }
+
+    public Page<ProdutoResponseDTO> buscarTodos(Pageable pageable, String nome, BigDecimal precoMin) {
+        Specification<Produto> spec = Specification.where(ProdutoSpecification.comPrecoMin(precoMin))
+                                                    .and(ProdutoSpecification.comNomeContendo(nome));
+        Page<Produto> produtos = produtoRepository.findAll(spec, pageable);
+        return produtoMapper.toPageDTO(produtos);
+    }
+
+    public void deletarPorId(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new ResourceNotFoundException(
+                String.format("Não há produto com id %d", id)
+            );
+        }
+        produtoRepository.deleteById(id);
+    }
+
+    public ProdutoResponseDTO atualizarPorId(ProdutoRequestDTO produtoRequestDTO, Long id) {
+        var produto = produtoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Produto com id %d não encontrado", id)
+            )
         );
-        return produtoResponseDTO;
+        var categorias = buscarCategorias(produtoRequestDTO.getCategoriasIds());
+        produto.setCategorias(categorias);
+        produtoMapper.updateEntityFromDTO(produtoRequestDTO, produto);
+        var produtoAtualizado = produtoRepository.save(produto);
+        return produtoMapper.toResponseDTO(produtoAtualizado);
     }
 }

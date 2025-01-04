@@ -1,6 +1,5 @@
 package br.ifrn.edu.jeferson.ecommerce.domain.dtos;
 
-import br.ifrn.edu.jeferson.ecommerce.domain.Cliente;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
