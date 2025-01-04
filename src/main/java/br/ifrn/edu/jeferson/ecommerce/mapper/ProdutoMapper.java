@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import br.ifrn.edu.jeferson.ecommerce.domain.Produto;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoResponseDTO;
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutosPorCategoriaResponseDTO;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProdutoMapper {
@@ -19,8 +20,13 @@ public interface ProdutoMapper {
     Produto toEntity(ProdutoRequestDTO produtoRequestDTO);
     
     ProdutoResponseDTO toResponseDTO(Produto produto);
+    ProdutosPorCategoriaResponseDTO toProdutosPorCategoriaResponseDTO(Produto produto);
+
     default Page<ProdutoResponseDTO> toPageDTO(Page<Produto> produtos) {
         return produtos.map(this::toResponseDTO);
+    }
+    default Page<ProdutosPorCategoriaResponseDTO> toProdutosPorCategoriaPageDTO(Page<Produto> produtos) {
+        return produtos.map(this::toProdutosPorCategoriaResponseDTO);
     }
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

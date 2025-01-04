@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoResponseDTO;
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutosPorCategoriaResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.service.ProdutoService;
 import jakarta.validation.Valid;
 
@@ -64,5 +65,14 @@ public class ProdutoController {
     ) {
         var produtoResponseDTO = produtoService.atualizarPorId(produtoRequestDTO, id);
         return ResponseEntity.ok(produtoResponseDTO);
+    }
+
+    @GetMapping("/categoria/{categoriaId}")
+    public ResponseEntity<Page<ProdutosPorCategoriaResponseDTO>> produtosPorCategoria(
+        @PathVariable Long categoriaId,
+        Pageable pageable
+    ) {
+        var produtosPorCategoriaResponseDTO = produtoService.produtosPorCategoria(categoriaId, pageable);
+        return ResponseEntity.ok(produtosPorCategoriaResponseDTO);
     }
 }

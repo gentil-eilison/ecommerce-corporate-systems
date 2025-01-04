@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import br.ifrn.edu.jeferson.ecommerce.domain.Categoria;
 import br.ifrn.edu.jeferson.ecommerce.domain.Produto;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoResponseDTO;
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutosPorCategoriaResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.exception.BusinessException;
 import br.ifrn.edu.jeferson.ecommerce.exception.ResourceNotFoundException;
 import br.ifrn.edu.jeferson.ecommerce.mapper.ProdutoMapper;
@@ -80,5 +82,18 @@ public class ProdutoService {
         produtoMapper.updateEntityFromDTO(produtoRequestDTO, produto);
         var produtoAtualizado = produtoRepository.save(produto);
         return produtoMapper.toResponseDTO(produtoAtualizado);
+    }
+
+    public Page<ProdutosPorCategoriaResponseDTO> produtosPorCategoria(
+        Long categoriaId,
+        Pageable pageable
+    ) {
+        var categoria = categoriaRepository.findById(categoriaId)
+                            .orElseThrow(() -> new ResourceNotFoundException(
+                                String.format("Categoria com id %d não encontrada", categoriaId)
+                            ));
+        var produtosCategoria = categoria.getProdutos();
+        var produtosPaginados = new PageImpl<Produto>(produtosCategoria, pageable, produtosCategoria.size());
+        return produtoMapper.toProdutosPorCategoriaPageDTO(produtosPaginados);
     }
 }
