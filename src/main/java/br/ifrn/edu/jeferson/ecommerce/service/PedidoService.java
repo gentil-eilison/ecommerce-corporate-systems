@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import br.ifrn.edu.jeferson.ecommerce.domain.ItemPedido;
@@ -20,6 +23,7 @@ import br.ifrn.edu.jeferson.ecommerce.repository.ClienteRepository;
 import br.ifrn.edu.jeferson.ecommerce.repository.ItemPedidoRepository;
 import br.ifrn.edu.jeferson.ecommerce.repository.PedidoRepository;
 import br.ifrn.edu.jeferson.ecommerce.repository.ProdutoRepository;
+import br.ifrn.edu.jeferson.ecommerce.specifications.PedidoSpecification;
 
 @Service
 public class PedidoService {
@@ -108,5 +112,18 @@ public class PedidoService {
                 String.format("Não existe pedido com esse id", id)
             ));
         return pedidoMapper.toResponseDTO(pedido);
+    }
+
+    public Page<PedidoResponseDTO> listar(
+        Pageable pageable,
+        StatusPedido statusPedido,
+        BigDecimal valorTotalMin,
+        BigDecimal valorTotalMax
+    ) {
+        Specification<Pedido> spec = Specification.where(PedidoSpecification.comStatusPedido(statusPedido))
+                                                    .and(PedidoSpecification.comValorTotalMin(valorTotalMin))
+                                                    .and(PedidoSpecification.comValorTotalMax(valorTotalMax));
+        Page<Pedido> pedidos = pedidoRepository.findAll(spec, pageable);
+        return pedidoMapper.toPageDTO(pedidos);
     }
 }

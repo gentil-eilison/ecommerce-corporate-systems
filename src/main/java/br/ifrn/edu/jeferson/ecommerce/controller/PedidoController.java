@@ -1,6 +1,10 @@
 package br.ifrn.edu.jeferson.ecommerce.controller;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,10 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.PedidoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.PedidoResponseDTO;
+import br.ifrn.edu.jeferson.ecommerce.domain.enums.StatusPedido;
 import br.ifrn.edu.jeferson.ecommerce.service.PedidoService;
 import jakarta.validation.Valid;
 
@@ -32,6 +38,22 @@ public class PedidoController {
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponseDTO> buscarPorId(@PathVariable Long id) {
         var pedidoResponseDTO = pedidoService.buscarPorId(id);
+        return ResponseEntity.ok(pedidoResponseDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<PedidoResponseDTO>> listar(
+        Pageable pageable,
+        @RequestParam(required = false) StatusPedido statusPedido,
+        @RequestParam(required = false) BigDecimal valorTotalMin,
+        @RequestParam(required = false) BigDecimal valorTotalMax
+    ) {
+        Page<PedidoResponseDTO> pedidoResponseDTO = pedidoService.listar(
+            pageable, 
+            statusPedido, 
+            valorTotalMin, 
+            valorTotalMax
+        );
         return ResponseEntity.ok(pedidoResponseDTO);
     }
 }
