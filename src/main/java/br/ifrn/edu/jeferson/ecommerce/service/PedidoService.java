@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import br.ifrn.edu.jeferson.ecommerce.domain.ItemPedido;
 import br.ifrn.edu.jeferson.ecommerce.domain.Pedido;
 import br.ifrn.edu.jeferson.ecommerce.domain.Produto;
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.AtualizarStatusPedidoDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.PedidoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.PedidoResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.enums.StatusPedido;
@@ -135,5 +136,18 @@ public class PedidoService {
         }
         Page<Pedido> pedidos = pedidoRepository.findByClienteId(clienteId, pageable);
         return pedidoMapper.toPageDTO(pedidos);
+    }
+
+    public PedidoResponseDTO atualizarStatusPedidoPorId(
+        Long id, 
+        AtualizarStatusPedidoDTO atualizarStatusPedidoDTO
+    ) {
+        var pedido = pedidoRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Não existe pedido com id %d", id)
+            ));
+        pedido.setStatusPedido(atualizarStatusPedidoDTO.getStatusPedido());
+        var pedidoAtualizado = pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedidoAtualizado);
     }
 }
