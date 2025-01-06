@@ -56,4 +56,13 @@ public class PedidoController {
         );
         return ResponseEntity.ok(pedidoResponseDTO);
     }
+
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<Page<PedidoResponseDTO>> listarPorClienteId(
+        @PathVariable Long clienteId,
+        Pageable pageable
+    ) {
+        Page<PedidoResponseDTO> pedidos = pedidoService.listarPorClienteId(pageable, clienteId);
+        return ResponseEntity.ok(pedidos);
+    }
 }

@@ -126,4 +126,14 @@ public class PedidoService {
         Page<Pedido> pedidos = pedidoRepository.findAll(spec, pageable);
         return pedidoMapper.toPageDTO(pedidos);
     }
+
+    public Page<PedidoResponseDTO> listarPorClienteId(Pageable pageable, Long clienteId) {
+        if (!clienteRepository.existsById(clienteId)) {
+            throw new ResourceNotFoundException(
+                String.format("Cliente com id %d não foi encontrado", clienteId)
+            );
+        }
+        Page<Pedido> pedidos = pedidoRepository.findByClienteId(clienteId, pageable);
+        return pedidoMapper.toPageDTO(pedidos);
+    }
 }
