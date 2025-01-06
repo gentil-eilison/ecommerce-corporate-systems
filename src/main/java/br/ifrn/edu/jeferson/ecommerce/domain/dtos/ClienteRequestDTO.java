@@ -15,12 +15,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ClienteRequestDTO {
     @NotBlank(message = "Nome não pode ser vazio")
-    @Size(max = 256, message = "Nome deve ter até 256 caracteres")
+    @Size(max = 255, message = "Nome deve ter até 256 caracteres")
     private String nome;
 
     @Email(message = "Email deve seguir o formato de emails")
     @NotBlank(message = "Email não pode ser vazio")
-    @Size(max = 256, message = "Email deve possuir até 256 caracteres")
+    @Size(max = 255, message = "Email deve possuir até 256 caracteres")
     private String email;
 
     @NotBlank(message = "CPF não pode ser nulo")

@@ -79,10 +79,12 @@ public class ClienteService {
     }
 
     public void deletarPorId(Long id) {
-        if (!clienteRepository.existsById(id)) {
-            throw new BusinessException(
+        var cliente = clienteRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(
                 String.format("Cliente com id %d não existe", id)
-            );
+            ));
+        if (cliente.getPedidos().size() > 0) {
+            throw new BusinessException("Não é possível deletar um cliente quando ele possui pedidos");
         }
         clienteRepository.deleteById(id);
     }
