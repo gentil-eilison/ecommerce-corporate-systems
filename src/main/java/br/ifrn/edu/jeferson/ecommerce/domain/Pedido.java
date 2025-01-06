@@ -19,10 +19,15 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, name = "data_pedido")
     private LocalDateTime dataPedido;
+
+    @Column(nullable = false, name = "valor_total")
     private BigDecimal valorTotal;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "status_pedido")
     private StatusPedido statusPedido;
 
     @ManyToOne

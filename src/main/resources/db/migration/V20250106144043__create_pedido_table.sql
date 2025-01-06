@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS pedido(
+    id SERIAL PRIMARY KEY,
+    data_pedido TIMESTAMP NOT NULL,
+    valor_total NUMERIC NOT NULL,
+    status_pedido VARCHAR(255) NOT NULL,
+    cliente_id INT NOT NULL REFERENCES cliente ON DELETE RESTRICT
+);
