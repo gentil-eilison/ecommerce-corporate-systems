@@ -33,14 +33,17 @@ public class CategoriaService {
         return mapper.toResponseDTO(categoria);
     }
 
-    public List<CategoriaResponseDTO> lista(){
+    public List<CategoriaResponseDTO> listar(){
         List<Categoria> categorias = categoriaRepository.findAll();
         return mapper.toDTOList (categorias);
     }
 
     public void deletar(Long id) {
-        if (!categoriaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Categoria não encontrada");
+        var categoria = categoriaRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+
+        if (categoria.getProdutos().size() > 0) {
+            throw new BusinessException("Essa categoria possui produtos associados");
         }
         categoriaRepository.deleteById(id);
     }

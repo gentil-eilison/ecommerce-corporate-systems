@@ -36,6 +36,4 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens = new ArrayList<>();
-
-
 }

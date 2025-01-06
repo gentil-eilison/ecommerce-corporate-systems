@@ -5,6 +5,8 @@ import br.ifrn.edu.jeferson.ecommerce.domain.dtos.CategoriaResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.service.CategoriaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,14 +23,16 @@ public class CategoriaController {
 
     @Operation(summary = "Criar uma nova categoria")
     @PostMapping
-    public ResponseEntity<CategoriaResponseDTO> salvar(@RequestBody CategoriaRequestDTO categoriaDto) {
+    public ResponseEntity<CategoriaResponseDTO> salvar(
+        @Valid @RequestBody CategoriaRequestDTO categoriaDto
+    ) {
         return ResponseEntity.ok(categoriaService.salvar(categoriaDto));
     }
 
     @Operation(summary = "Listar uma nova categoria")
     @GetMapping
     public ResponseEntity<List<CategoriaResponseDTO>> listar() {
-        return ResponseEntity.ok(categoriaService.lista());
+        return ResponseEntity.ok(categoriaService.listar());
     }
 
     @Operation(summary = "Deletar uma nova categoria")
@@ -40,7 +44,10 @@ public class CategoriaController {
 
     @Operation(summary = "Atualizar uma nova categoria")
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaResponseDTO> atualizar(@PathVariable Long id, @RequestBody CategoriaRequestDTO categoriaDto) {
+    public ResponseEntity<CategoriaResponseDTO> atualizar(
+        @PathVariable Long id,
+        @Valid @RequestBody CategoriaRequestDTO categoriaDto
+    ) {
         return ResponseEntity.ok(categoriaService.atualizar(id, categoriaDto));
     }
 
