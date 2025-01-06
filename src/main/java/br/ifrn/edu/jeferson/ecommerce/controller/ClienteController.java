@@ -2,6 +2,7 @@ package br.ifrn.edu.jeferson.ecommerce.controller;
 
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ClienteRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ClienteResponseDTO;
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.PedidoResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.service.ClienteService;
 import jakarta.validation.Valid;
 
@@ -46,5 +47,14 @@ public class ClienteController {
     public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteRequestDTO clienteRequestDTO) {
         var clienteResponseDTO = clienteService.atualizar(clienteRequestDTO, id);
         return ResponseEntity.ok(clienteResponseDTO);
+    }
+
+    @GetMapping("/{id}/pedidos")
+    public ResponseEntity<Page<PedidoResponseDTO>> listarPedidosPorClienteId(
+        @PathVariable Long id,
+        Pageable pageable
+    ) {
+        Page<PedidoResponseDTO> pedidos = clienteService.listarProdutosPorClienteId(id, pageable);
+        return ResponseEntity.ok(pedidos);
     }
 }

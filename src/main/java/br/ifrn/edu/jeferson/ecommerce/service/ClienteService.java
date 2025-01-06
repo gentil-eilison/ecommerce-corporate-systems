@@ -3,6 +3,7 @@ package br.ifrn.edu.jeferson.ecommerce.service;
 import br.ifrn.edu.jeferson.ecommerce.domain.Cliente;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ClienteRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ClienteResponseDTO;
+import br.ifrn.edu.jeferson.ecommerce.domain.dtos.PedidoResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.exception.BusinessException;
 import br.ifrn.edu.jeferson.ecommerce.exception.ResourceNotFoundException;
 import br.ifrn.edu.jeferson.ecommerce.mapper.ClienteMapper;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service;
 public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private PedidoService pedidoService;
 
     @Autowired
     private ClienteMapper clienteMapper;
@@ -95,5 +99,9 @@ public class ClienteService {
         var clienteAtualizado = clienteRepository.save(cliente);
         
         return clienteMapper.toResponseDTO(clienteAtualizado);
+    }
+
+    public Page<PedidoResponseDTO> listarProdutosPorClienteId(Long clienteId, Pageable pageable) {
+        return pedidoService.listarPorClienteId(pageable, clienteId);
     }
 }
