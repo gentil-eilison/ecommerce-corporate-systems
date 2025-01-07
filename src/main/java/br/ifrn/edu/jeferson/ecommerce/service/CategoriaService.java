@@ -94,4 +94,21 @@ public class CategoriaService {
         produtoRepository.save(produto);
     }
 
+    public void removerProdutoCategoria(Long categoriaId, Long produtoId) {
+        var produto = produtoRepository.findById(produtoId)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "Não há produto com o id especificado"
+            ));
+        var categoria = categoriaRepository.findById(categoriaId)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "Não há categoria com o id especificado"
+            ));
+        
+        if (!produto.getCategorias().contains(categoria)) {
+            throw new BusinessException("Esse produto não está nessa categoria");
+        }
+        produto.getCategorias().remove(categoria);
+        produtoRepository.save(produto);
+    }
+ 
 }

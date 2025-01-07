@@ -60,4 +60,13 @@ public class CategoriaController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{categoriaId}/produtos/{produtoId}")
+    public ResponseEntity<Void> removerProdutoCategoria(
+        @PathVariable Long categoriaId,
+        @PathVariable Long produtoId
+    ) {
+        categoriaService.removerProdutoCategoria(categoriaId, produtoId);
+        return ResponseEntity.ok().build();
+    }
+
 }
