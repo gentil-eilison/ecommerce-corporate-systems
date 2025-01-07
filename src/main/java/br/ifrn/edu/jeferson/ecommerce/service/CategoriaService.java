@@ -8,9 +8,9 @@ import br.ifrn.edu.jeferson.ecommerce.exception.ResourceNotFoundException;
 import br.ifrn.edu.jeferson.ecommerce.mapper.CategoriaMapper;
 import br.ifrn.edu.jeferson.ecommerce.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CategoriaService {
@@ -18,24 +18,32 @@ public class CategoriaService {
     private CategoriaRepository categoriaRepository;
 
     @Autowired
-    private CategoriaMapper mapper;
-    @Autowired
     private CategoriaMapper categoriaMapper;
 
-    public CategoriaResponseDTO salvar(CategoriaRequestDTO categoriaDto) {
-        var categoria =  mapper.toEntity(categoriaDto);
+    private void jogarSeNomeCategoriaNaoUnico(String nome, Long id) {
+        boolean categoriaExiste = false;
 
-        if (categoriaRepository.existsByNome(categoria.getNome())) {
-            throw new BusinessException("Já existe uma categoria com esse nome");
+        if (id != null) {
+            categoriaExiste = categoriaRepository.existsByNomeAndIdNot(nome, id);
+        } else {
+            categoriaExiste = categoriaRepository.existsByNome(nome);
         }
 
-        categoriaRepository.save(categoria);
-        return mapper.toResponseDTO(categoria);
+        if (categoriaExiste) throw new BusinessException("Já existe uma categoria com esse nome");
     }
 
-    public List<CategoriaResponseDTO> listar(){
-        List<Categoria> categorias = categoriaRepository.findAll();
-        return mapper.toDTOList (categorias);
+    public CategoriaResponseDTO salvar(CategoriaRequestDTO categoriaDto) {
+        var categoria = categoriaMapper.toEntity(categoriaDto);
+
+        jogarSeNomeCategoriaNaoUnico(categoriaDto.getNome(), null);
+
+        categoriaRepository.save(categoria);
+        return categoriaMapper.toResponseDTO(categoria);
+    }
+
+    public Page<CategoriaResponseDTO> listar(Pageable pageable){
+        Page<Categoria> categorias = categoriaRepository.findAll(pageable);
+        return categoriaMapper.toPageDTO(categorias);
     }
 
     public void deletar(Long id) {
@@ -51,9 +59,7 @@ public class CategoriaService {
     public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO categoriaDto) {
         Categoria categoria = categoriaRepository.findById(id).orElseThrow( () -> new ResourceNotFoundException("Categoria não encontrada"));
 
-        if (!categoria.getNome().equals(categoriaDto.getNome()) && categoriaRepository.existsByNome( categoriaDto.getNome()) ) {
-            throw  new BusinessException("Já existe uma categoria com esse nome");
-        }
+        jogarSeNomeCategoriaNaoUnico(categoriaDto.getNome(), id);
 
         categoriaMapper.updateEntityFromDTO(categoriaDto, categoria);
         var categoriaAlterada = categoriaRepository.save(categoria);

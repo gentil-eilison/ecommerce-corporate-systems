@@ -4,6 +4,7 @@ import br.ifrn.edu.jeferson.ecommerce.domain.Categoria;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.CategoriaRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.CategoriaResponseDTO;
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -18,6 +19,9 @@ public interface CategoriaMapper {
     Categoria toEntity(CategoriaRequestDTO dto);
 
     List<CategoriaResponseDTO> toDTOList(List<Categoria> categorias);
+    default Page<CategoriaResponseDTO> toPageDTO(Page<Categoria> categorias) {
+        return categorias.map(this::toResponseDTO);
+    }
 
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
