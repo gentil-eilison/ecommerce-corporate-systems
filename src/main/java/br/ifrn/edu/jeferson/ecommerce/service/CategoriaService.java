@@ -7,6 +7,8 @@ import br.ifrn.edu.jeferson.ecommerce.exception.BusinessException;
 import br.ifrn.edu.jeferson.ecommerce.exception.ResourceNotFoundException;
 import br.ifrn.edu.jeferson.ecommerce.mapper.CategoriaMapper;
 import br.ifrn.edu.jeferson.ecommerce.repository.CategoriaRepository;
+import br.ifrn.edu.jeferson.ecommerce.repository.ProdutoRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,9 @@ import org.springframework.stereotype.Service;
 public class CategoriaService {
     @Autowired
     private CategoriaRepository categoriaRepository;
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
 
     @Autowired
     private CategoriaMapper categoriaMapper;
@@ -70,6 +75,23 @@ public class CategoriaService {
     public CategoriaResponseDTO buscarPorId(Long id) {
         Categoria categoria = categoriaRepository.findById(id).orElseThrow( () -> new ResourceNotFoundException("Categoria não encontrada"));
         return categoriaMapper.toResponseDTO(categoria);
+    }
+
+    public void associarProdutoCategoria(Long categoriaId, Long produtoId) {
+        var produto = produtoRepository.findById(produtoId)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "Não há produto com o id especificado"
+            ));
+        var categoria = categoriaRepository.findById(categoriaId)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "Não há categoria com o id especificado"
+            ));
+        
+        if (produto.getCategorias().contains(categoria)) {
+            throw new BusinessException("Esse produto já possui essa categoria");
+        }
+        produto.getCategorias().add(categoria);
+        produtoRepository.save(produto);
     }
 
 }
