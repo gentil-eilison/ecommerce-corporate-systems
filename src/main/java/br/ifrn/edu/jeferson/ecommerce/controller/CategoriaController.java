@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +24,11 @@ public class CategoriaController {
 
     @Operation(summary = "Cria uma nova categoria")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CategoriaResponseDTO> salvar(
         @Valid @RequestBody CategoriaRequestDTO categoriaDto
     ) {
-        return ResponseEntity.ok(categoriaService.salvar(categoriaDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaService.salvar(categoriaDto));
     }
 
     @Operation(summary = "Lista todas as categorias")
@@ -37,9 +39,10 @@ public class CategoriaController {
 
     @Operation(summary = "Deleta uma nova categoria")
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         categoriaService.deletar(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Atualiza uma nova categoria")
