@@ -23,14 +23,18 @@ import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoRequestDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutoResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.domain.dtos.ProdutosPorCategoriaResponseDTO;
 import br.ifrn.edu.jeferson.ecommerce.service.ProdutoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/produtos")
+@Tag(name = "Produtos", description = "API de gerenciamento de produtos")
 public class ProdutoController {
     @Autowired
     private ProdutoService produtoService;
-
+    
+    @Operation(summary = "Cria um novo produto")
     @PostMapping
     public ResponseEntity<ProdutoResponseDTO> salvar(
         @Valid @RequestBody ProdutoRequestDTO produtoRequestDTO
@@ -40,11 +44,13 @@ public class ProdutoController {
             .body(produtoService.salvar(produtoRequestDTO));
     }
 
+    @Operation(summary = "Retorna um produto específico")
     @GetMapping("/{id}")
     public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(produtoService.buscarPorId(id));
     }
 
+    @Operation(summary = "Retorna uma lista de todos os produtos")
     @GetMapping
     public ResponseEntity<Page<ProdutoResponseDTO>> buscarTodos(
         @RequestParam(required = false) String nome,
@@ -54,12 +60,14 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.buscarTodos(pageable, nome, precoMin));
     }
 
+    @Operation(summary = "Deleta um produto")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarPorId(@PathVariable Long id) {
         produtoService.deletarPorId(id);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Atualiza um produto")
     @PutMapping("/{id}")
     public ResponseEntity<ProdutoResponseDTO> atualizarPorId(
         @PathVariable Long id,
@@ -69,6 +77,7 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoResponseDTO);
     }
 
+    @Operation(summary = "Retorna os produtos de uma categoria específica")
     @GetMapping("/categoria/{categoriaId}")
     public ResponseEntity<Page<ProdutosPorCategoriaResponseDTO>> produtosPorCategoria(
         @PathVariable Long categoriaId,
@@ -78,6 +87,7 @@ public class ProdutoController {
         return ResponseEntity.ok(produtosPorCategoriaResponseDTO);
     }
 
+    @Operation(summary = "Atualiza o estoque de um produto específico")
     @PatchMapping("/{id}/estoque")
     public ResponseEntity<ProdutoResponseDTO> atualizarEstoque(
         @Valid @RequestBody ProdutoPartialRequestDTO produtoPartialRequestDTO,

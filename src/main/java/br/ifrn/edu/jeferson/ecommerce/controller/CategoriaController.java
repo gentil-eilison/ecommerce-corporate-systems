@@ -21,7 +21,7 @@ public class CategoriaController {
     @Autowired
     private CategoriaService categoriaService;
 
-    @Operation(summary = "Criar uma nova categoria")
+    @Operation(summary = "Cria uma nova categoria")
     @PostMapping
     public ResponseEntity<CategoriaResponseDTO> salvar(
         @Valid @RequestBody CategoriaRequestDTO categoriaDto
@@ -29,20 +29,20 @@ public class CategoriaController {
         return ResponseEntity.ok(categoriaService.salvar(categoriaDto));
     }
 
-    @Operation(summary = "Listar uma nova categoria")
+    @Operation(summary = "Lista todas as categorias")
     @GetMapping
     public ResponseEntity<Page<CategoriaResponseDTO>> listar(Pageable pageable) {
         return ResponseEntity.ok(categoriaService.listar(pageable));
     }
 
-    @Operation(summary = "Deletar uma nova categoria")
+    @Operation(summary = "Deleta uma nova categoria")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         categoriaService.deletar(id);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Atualizar uma nova categoria")
+    @Operation(summary = "Atualiza uma nova categoria")
     @PutMapping("/{id}")
     public ResponseEntity<CategoriaResponseDTO> atualizar(
         @PathVariable Long id,
@@ -51,6 +51,7 @@ public class CategoriaController {
         return ResponseEntity.ok(categoriaService.atualizar(id, categoriaDto));
     }
 
+    @Operation(summary = "Associa um produto a uma categoria")
     @PostMapping("/{categoriaId}/produtos/{produtoId}")
     public ResponseEntity<Void> associarProdutoCategoria(
         @PathVariable Long categoriaId,
@@ -60,6 +61,7 @@ public class CategoriaController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Desassocia um produto a uma categoria")
     @DeleteMapping("/{categoriaId}/produtos/{produtoId}")
     public ResponseEntity<Void> removerProdutoCategoria(
         @PathVariable Long categoriaId,
