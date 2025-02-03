@@ -30,8 +30,9 @@ public class ClienteService {
 
         if (id != null) {
             exists = clienteRepository.existsByCpfAndIdNot(cpf, id);
+        } else {
+            exists = clienteRepository.existsByCpf(cpf);
         }
-        exists = clienteRepository.existsByCpf(cpf);
 
         if (exists) throw new BusinessException(
             String.format("Cliente com CPF %s já existe", cpf)
@@ -43,8 +44,9 @@ public class ClienteService {
         
         if (id != null) {
             exists = clienteRepository.existsByEmailAndIdNot(email, id);
+        } else {
+            exists = clienteRepository.existsByEmail(email);
         }
-        exists = clienteRepository.existsByEmail(email);
 
         if (exists) throw new BusinessException(
             String.format("Cliente com e-mail %s já existe", email)
